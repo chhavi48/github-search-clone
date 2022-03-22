@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./styles/index.css">
+<style>
+   
+</style>
+</head>
+
+<body>
+    <div id="navbar"></div>
+    <div id="main">
+        <div id="pics"></div>
+    <div id="repos"></div>
+    <div id="follow_pic"></div>
+</div>
+
+</body>
+
+</html>
+<script type="module">
+    import header from "./components/header.js"
+    // console.log(header)
+
+    let nav = document.getElementById("navbar")
+
+    nav.innerHTML = header()
+
+    // https://api.github.com/users/Chhattoo25/repos
+
+    let input_box = document.getElementById("search-input")
+    input_box.addEventListener("keypress", () => {
+        getData(event)
+    })
+
+    let img = document.getElementById("profile-img")
+    const getData = async (e) => {
+        //    console.log(e)
+        try {
+
+            if (e.code === "Enter") {
+
+                let input = input_box.value
+                let res = await fetch(`https://api.github.com/users/${input}/repos`)
+                let data = await res.json()
+                img.src = data[0].owner.avatar_url
+                console.log(data)
+                profile(data[0].owner)
+                repo(data)
+            }
+        }
+        catch (err) {
+            console.log(err)
+        }
+
+
+    }
+    const profile=(el)=>{
+        console.log(el)
+        document.getElementById("pics").innerHTML=null;
+        let div=document.createElement("div")
+        let pic=document.createElement("img")
+        pic.src=el.avatar_url;
+        pic.setAttribute('id',"profilepic")
+        let name=document.createElement("h1")
+        name.innerText=el.login;
+        name.style.color="white";
+       
+        div.append(pic,name)
+        document.getElementById("pics").append(div)
+    }
+    const repo=(data)=>{
+        console.log(data)
+        data.map(function(el){
+
+  
+        //document.getElementById("repo").innerHTML=null;
+        let div=document.createElement("div")
+        let title=document.createElement("p")
+        title.innerText=el.name;
+        title.style.color="#4580ad";
+       let visibility=document.createElement("div")
+       visibility.innerText=el.visibility;
+       visibility.style.color="white";
+      
+       visibility.setAttribute("id","visi")
+       let fullname=document.createElement("p")
+        fullname.innerText=el.full_name;
+        fullname.style.color="white";
+        fullname.style.height="8px"
+        div.append(title,visibility,fullname)
+        document.getElementById("repos").append(div)
+    })
+    }
+
+</script>
